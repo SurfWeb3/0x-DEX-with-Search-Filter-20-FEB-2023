@@ -99,12 +99,28 @@ function openModal(side){
 //when the user clicks on the x in the upper right corner of the wondow.
 function closeModal(){
     document.getElementById("token_modal").style.display = "none";
+    document.getElementById("searchInput").value = "";
+    showAlltoken();
+    setTimeout(getPrice, 100);
+}
+
+function showAlltoken() {
+  var parentEle = document.getElementById("token_list");
+  var tokenEle = parentEle.getElementsByTagName("span");
+  for (let i = 0; i < tokenEle.length; i++) {
+    tokenEle[i].parentElement.style.display = "";
+  }
 }
 //
 async function getPrice(){
     console.log("Getting Price");
   
-    if (!currentTrade.from || !currentTrade.to || !document.getElementById("from_amount").value) {
+    if(!currentTrade.from || !currentTrade.to) {
+      document.getElementById("to_amount").value = "";
+      document.getElementById("gas_estimate").innerHTML = '';
+      return;
+    }
+    if (!document.getElementById("from_amount").value) {
       document.getElementById("to_amount").value = 0;
       document.getElementById("gas_estimate").innerHTML = '0';
       return;
