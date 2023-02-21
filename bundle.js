@@ -104,9 +104,13 @@ function closeModal(){
 async function getPrice(){
     console.log("Getting Price");
   
-    if (!currentTrade.from || !currentTrade.to || !document.getElementById("from_amount").value) return;
+    if (!currentTrade.from || !currentTrade.to || !document.getElementById("from_amount").value) {
+      document.getElementById("to_amount").value = 0;
+      document.getElementById("gas_estimate").innerHTML = '0';
+      return;
+    };
     let amount = Number(document.getElementById("from_amount").value * 10 ** currentTrade.from.decimals);
-
+    
     
 //parameters for token to buy, token to sell, with token address, and sell amount    
     const params = {
@@ -120,9 +124,14 @@ async function getPrice(){
     
     swapPriceJSON = await response.json();
     console.log("Price: ", swapPriceJSON);
-    
-    document.getElementById("to_amount").value = swapPriceJSON.buyAmount / (10 ** currentTrade.to.decimals);
-    document.getElementById("gas_estimate").innerHTML = swapPriceJSON.estimatedGas;
+    if(swapPriceJSON.estimatedGas == undefined) {
+      document.getElementById("to_amount").value = 0;
+      document.getElementById("gas_estimate").innerHTML = '0';
+      return;
+    } else {
+      document.getElementById("to_amount").value = swapPriceJSON.buyAmount / (10 ** currentTrade.to.decimals);
+      document.getElementById("gas_estimate").innerHTML = swapPriceJSON.estimatedGas;
+    }
 }
 
 async function getQuote(account){
@@ -204,7 +213,7 @@ document.getElementById("to_token_select").onclick = () => {
     openModal("to");
 };
 document.getElementById("modal_close").onclick = closeModal;
-document.getElementById("from_amount").onblur = getPrice;
+document.getElementById("from_amount").onkeyup = getPrice;
 document.getElementById("swap_button").onclick = trySwap;
 },{"bignumber.js":3,"qs":14,"web3":19}],3:[function(require,module,exports){
 ;(function (globalObject) {
